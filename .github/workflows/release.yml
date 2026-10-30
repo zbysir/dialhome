@@ -1,0 +1,49 @@
+# 推 v* tag 就发版：测试 → goreleaser（交叉编译 + GitHub Release + 推 ghcr.io/zbysir/dialhome 镜像）。
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write # 建 GitHub Release
+  packages: write # 推 ghcr 镜像
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # goreleaser 要全部历史来生成 changelog
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: 测试
+        run: |
+          make web
+          make test
+
+      # 不装 QEMU：Dockerfile 里只有 COPY 没有 RUN，出 arm64 镜像不用模拟执行任何东西
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: goreleaser
+        uses: goreleaser/goreleaser-action@v7
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

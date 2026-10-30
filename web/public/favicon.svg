@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- dialhome：底下一个点是你的机器，上面两道弧是它往外打的那通电话。底色和 gerdr 的图标同一个灰。 -->
+  <rect width="64" height="64" rx="14" fill="#3a3b3e"/>
+  <circle cx="32" cy="42" r="5" fill="#f2f2f2"/>
+  <path d="M22 32a14 14 0 0 1 20 0" fill="none" stroke="#f2f2f2" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M14.5 24.5a24.5 24.5 0 0 1 35 0" fill="none" stroke="#8fb4ff" stroke-width="4.5" stroke-linecap="round"/>
+</svg>

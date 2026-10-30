@@ -1,0 +1,75 @@
+# goreleaser 配置。本地干跑一遍：make release-dry
+version: 2
+
+project_name: dialhome
+
+before:
+  hooks:
+    - go mod tidy
+    # 前端产物要先在 internal/webui/dist 里就位，go:embed 才有东西可嵌
+    - make web
+
+builds:
+  - id: dialhome
+    main: ./cmd/dialhome
+    binary: dialhome
+    env:
+      - CGO_ENABLED=0
+    goos: [linux, darwin]
+    goarch: [amd64, arm64]
+    ldflags:
+      - -s -w
+      - -X github.com/zbysir/dialhome/internal/version.Version={{ .Version }}
+      - -X github.com/zbysir/dialhome/internal/version.Commit={{ .FullCommit }}
+      - -X github.com/zbysir/dialhome/internal/version.Date={{ .CommitDate }}
+    mod_timestamp: "{{ .CommitTimestamp }}" # 可复现构建：同一个 commit 出同样的二进制
+
+archives:
+  - id: default
+    ids: [dialhome]
+    formats: [tar.gz]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - README.md
+      - LICENSE
+
+# VPS 上一般用 docker 跑。只出 linux。推到 ghcr，登录在 release.yml 里。
+# 第一次推上去之后 ghcr 上这个包默认是 private，要去包的设置里改成 public 一次，不然别人拉不到。
+dockers_v2:
+  - id: dialhome
+    ids: [dialhome]
+    dockerfile: docker/Dockerfile
+    images: ["ghcr.io/zbysir/dialhome"]
+    tags:
+      - "{{ .Version }}"
+      - "{{ if not .Prerelease }}latest{{ end }}"
+    platforms: [linux/amd64, linux/arm64]
+    labels:
+      org.opencontainers.image.source: https://github.com/zbysir/dialhome
+      org.opencontainers.image.description: 云端中继：只转发密文，TLS 在你自己的机器上终止
+      org.opencontainers.image.licenses: MIT
+      org.opencontainers.image.version: "{{ .Version }}"
+      org.opencontainers.image.revision: "{{ .FullCommit }}"
+
+checksum:
+  name_template: checksums.txt
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+
+release:
+  github:
+    owner: zbysir
+    name: dialhome
+  prerelease: auto
+  footer: |
+    ## 安装
+
+    ```sh
+    docker pull ghcr.io/zbysir/dialhome:{{ .Version }}
+    ```
+
+    或者下面按平台下二进制。部署见 README。

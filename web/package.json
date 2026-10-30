@@ -1,0 +1,30 @@
+{
+  "name": "dialhome-web",
+  "private": true,
+  "type": "module",
+  "description": "dialhome 的管理后台。组件和配色照搬 gerdr 的界面（shadcn/ui new-york + Tailwind v4），由 make web 打包后嵌进二进制。",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "lucide-react": "0.525.0",
+    "radix-ui": "1.8.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "sonner": "2.0.8",
+    "tailwind-merge": "3.7.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "^6.1.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "5.8.3",
+    "vite": "^8.2.2"
+  }
+}

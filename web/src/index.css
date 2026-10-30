@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+/* 配色、圆角、字体照搬 gerdr 的界面（~/dev/bysir/gerdr/ui/src/index.css），两边看着是一家的。
+   改 token 之前先看那边有没有改过，别各改各的。 */
+@custom-variant dark (&:is(.dark *));
+
+/* 灰阶纯灰（不带色相），强调色只有一个 —— 和终端里那些彩色输出放一起不脏。 */
+:root {
+  /* 圆角就这几档（sm 6 / md 8 / lg 10 / xl 14 px），按东西的大小挑，别写死像素：
+     sm = 小件和浮层里的项（菜单项、标签、小按钮）；md = 控件（按钮、输入框、列表行）；
+     lg = 浮层和卡片（菜单、弹出框、工具卡片、代码块）—— 里面的项是 sm、外框 p-1，外 = 内 + 内边距，弧线才是同心的；
+     xl = 弹窗；输入框用 2xl（16px，22px 太圆）；用户气泡单独用 22px。裸 rounded 是 Tailwind 固定的 4px，不跟这里走，别用。 */
+  --radius: 0.625rem;
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.2 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.2 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.2 0 0);
+  --primary: oklch(0.25 0 0);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.955 0 0);
+  --secondary-foreground: oklch(0.25 0 0);
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.52 0 0);
+  --accent: oklch(0.95 0 0);
+  --accent-foreground: oklch(0.25 0 0);
+  --destructive: oklch(0.58 0.22 27);
+  --border: oklch(0.91 0 0);
+  --input: oklch(0.89 0 0);
+  --ring: oklch(0.6 0.13 250);
+  --sidebar: oklch(0.975 0 0);
+  --brand: oklch(0.58 0.15 255);
+  --ok: oklch(0.62 0.15 150);
+  --warn: oklch(0.75 0.15 75);
+  --bad: oklch(0.6 0.21 25);
+
+}
+
+.dark {
+  --background: oklch(0.165 0 0);
+  /* 正文字色 0.93：试过 0.97，太白；字发虚主要是 antialiased 的锅（见下面 .dark body），不是颜色 */
+  --foreground: oklch(0.93 0 0);
+  --card: oklch(0.2 0 0);
+  --card-foreground: oklch(0.93 0 0);
+  --popover: oklch(0.21 0 0);
+  --popover-foreground: oklch(0.93 0 0);
+  --primary: oklch(0.92 0 0);
+  --primary-foreground: oklch(0.2 0 0);
+  --secondary: oklch(0.25 0 0);
+  --secondary-foreground: oklch(0.93 0 0);
+  --muted: oklch(0.24 0 0);
+  --muted-foreground: oklch(0.66 0 0);
+  --accent: oklch(0.27 0 0);
+  --accent-foreground: oklch(0.95 0 0);
+  --destructive: oklch(0.66 0.2 25);
+  --border: oklch(0.29 0 0);
+  --input: oklch(0.31 0 0);
+  --ring: oklch(0.62 0.13 250);
+  --sidebar: oklch(0.14 0 0);
+  --brand: oklch(0.7 0.13 250);
+  --ok: oklch(0.72 0.15 150);
+  --warn: oklch(0.8 0.14 80);
+  --bad: oklch(0.68 0.19 25);
+
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-brand: var(--brand);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-bad: var(--bad);
+  --font-mono: "SF Mono", "JetBrains Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+/* 全局样式必须放在 layer 里：未分层的样式会压过所有 layer（包括 Tailwind 的工具类），
+   一条 `* { ... }` 就能让某个工具类「看着在元素上却不生效」。 */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  }
+  /* 深色底上不用 antialiased（灰度抗锯齿）：它在 macOS 深色背景上会把字削细、发虚，同样字重看着比 Codex 淡一档。
+     用系统默认渲染，字更实。浅色底上深色字不受影响，照旧 antialiased。 */
+  .dark body {
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+  }
+  /* 细滚动条，和 gerdr 一样 6px */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklch, var(--foreground) 18%, transparent);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+

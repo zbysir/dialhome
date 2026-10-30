@@ -1,0 +1,5 @@
+/dialhome
+/dist
+/internal/webui/dist/*
+!/internal/webui/dist/.gitkeep
+.DS_Store
